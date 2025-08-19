@@ -19,11 +19,15 @@ Herramientas adicionales:
 - RSyntaxTextArea → Editor de texto con resaltado de sintaxis
 
 ## Instalación y ejecución
-Clonar el repositorio
+Clonar el repositorio: 
 ```groovy
 git clone https://github.com/usuario/simulador-compilador-kotlin.git
 ```
+Dirigirse ala Ruta:
+```groovy
 cd simulador-compilador-kotlin
+```
+
 Abrir en IntelliJ IDEA
 Importar el proyecto como Proyecto Maven/Gradle (dependiendo de la configuración).
 Asegurarse de que el JDK 17 (o superior) esté configurado.
