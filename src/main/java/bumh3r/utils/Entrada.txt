@@ -1,0 +1,66 @@
+package ejemplocupjava;
+public class AnalizadorPrueba {
+    int valor = 123;
+    double deci = 45.67;
+    boolean resp = true;
+    String texto = "Hola mundo";
+
+    public int calcularArea(int base, int altura) {
+        int area;
+        int suma = 0;
+        System.out.println("Suma: " + suma);
+        area = base * altura + area;
+
+        area = base * altura + area;
+        //&&
+        //||
+        //!
+        System.out.println("Area calculada: " + area);
+        return area;
+    }
+
+    public static void main(String[] args) {
+        // Vacio
+    }
+
+    public void metodoVacio() {
+        // Método sin parámetros ni retorno
+    }
+
+    public String concatenar(String ggh, String str2) {
+        String resultado ;
+        resultado = str1 + str2;
+        return resultado;
+    }
+
+    public boolean esPar(int numero) {
+        if(numero % 2 == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void ejemploIf() {
+        int x = 10;
+        if(x > 5) {
+            System.out.println("X es mayor que 5");
+        } else {
+            System.out.println("X es menor que 5");
+        }
+    }
+
+    public void ejemploWhile() {
+        int i = 0;
+        while(i < 5) {
+            System.out.println("Iteracion: " + i);
+            i++;
+        }
+    }
+
+    public void ejemploFor() {
+        for(int j = 0; j < 3; j++) {
+            System.out.println("For loop: " + j);
+        }
+    }
+}

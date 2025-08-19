@@ -1,0 +1,319 @@
+package bumh3r.utils;
+import java_cup.runtime.Symbol;
+
+parser code{:
+    private Symbol s;
+
+    public void syntax_error(Symbol s){
+        this.s = s;
+    }
+
+    public String getError(){
+        return  "Error en la linea : " + (s.left + 1) +
+                       "\nColumna : " + (s.right + 1) +
+                       "\nSimbolo : " + s.value;
+    }
+:};
+
+action code {:  :};
+
+terminal PACKAGE, IMPORT, CLASS, OBJECT, INTERFACE;
+terminal DATA, SEALED, ABSTRACT, ENUM, PUBLIC, PRIVATE, PROTECTED, INTERNAL;
+terminal OPEN, FINAL, FUN, VAL, VAR, CONST, LATEINIT;
+terminal IF, ELSE, WHEN, FOR, WHILE, DO, BREAK, CONTINUE, RETURN;
+terminal TRY, CATCH, FINALLY, THROW;
+terminal TRUE, FALSE, NULL;
+terminal TIPO_DATOS, IDENTIFICADOR, NUMERO_DECIMAL, NUMERICO, CADENA;
+terminal ASIGNACION, PUNTO_Y_COMA, DOS_PUNTOS, PARENTESIS_APERTURA, PARENTESIS_CIERRE;
+terminal LLAVE_APERTURA, LLAVE_CIERRE, CORCHETE_APER, CORCHETE_CIERRE;
+terminal COMA, PUNTO, COMENTARIO;
+terminal ELVIS, SAFE_CALL, NULLABLE, ARROW, RANGE, RANGE_INCLUSIVE, RANGE_EXCLUSIVE;
+terminal MENOS, MAS, MULTIPLICACION, DIVISION, MODULO, INCREMENTO, DECREMENTO;
+terminal AND, OR, NOT;
+terminal IGUAL, DIFERENTE, MENOR, MAYOR, MENOR_IGUAL, MAYOR_IGUAL;
+terminal IN_RANGE;
+
+// No terminales - Estructura del programa
+non terminal programa, declaracion_package, lista_imports, import_declaration;
+non terminal lista_declaraciones_nivel_superior, declaracion_nivel_superior;
+non terminal declaracion_clase, modificadores, lista_modificadores, modificador;
+non terminal cuerpo_clase, lista_miembros_clase, miembro_clase;
+non terminal declaracion_objeto, declaracion_interface;
+non terminal declaracion_funcion, lista_parametros, parametro, tipo_opcional;
+non terminal declaracion_propiedad, inicializador_opcional;
+non terminal cuerpo_funcion, bloque_sentencias;
+non terminal tipo, tipo_primitivo, tipo_nullable;
+non terminal lista_sentencias, sentencia, sentencia_simple, sentencia_compuesta;
+non terminal sentencia_asignacion, sentencia_declaracion_variable, sentencia_return;
+non terminal sentencia_if, sentencia_when, sentencia_for, sentencia_while;
+non terminal sentencia_try, sentencia_break, sentencia_continue;
+non terminal expresion, expresion_primaria, expresion_postfijo, expresion_unaria;
+non terminal expresion_multiplicativa, expresion_aditiva, expresion_relacional;
+non terminal expresion_igualdad, expresion_logica_and, expresion_logica_or;
+non terminal expresion_elvis;
+non terminal literal, lista_argumentos, argumento;
+non terminal acceso_miembro, expresion_rango,punto_separado_identificadores,punto_y_coma_opcional,lista_when_entries;
+non terminal when_entry, lista_catch_clauses, catch_clause, finally_clause_opcional;
+
+// Precedencia de operadores (de menor a mayor precedencia)
+precedence left OR;
+precedence left AND;
+precedence left IGUAL, DIFERENTE;
+precedence left MENOR, MAYOR, MENOR_IGUAL, MAYOR_IGUAL;
+precedence left RANGE, RANGE_INCLUSIVE;
+precedence left MAS, MENOS;
+precedence left MULTIPLICACION, DIVISION, MODULO;
+precedence right NOT, MENOS;
+precedence left PUNTO, SAFE_CALL;
+precedence right ELVIS;
+precedence left NULLABLE;
+precedence nonassoc ELSE;
+precedence left PARENTESIS_APERTURA;
+precedence right RETURN;
+
+start with programa;
+
+// Estructura principal del programa
+programa ::= declaracion_package lista_imports lista_declaraciones_nivel_superior
+    | declaracion_package lista_declaraciones_nivel_superior
+    {:System.out.println("Programa Kotlin parseado correctamente!");:}
+    | lista_imports lista_declaraciones_nivel_superior
+    | lista_declaraciones_nivel_superior
+    |  ;
+
+declaracion_package ::= PACKAGE IDENTIFICADOR punto_separado_identificadores PUNTO_Y_COMA
+    | PACKAGE IDENTIFICADOR PUNTO_Y_COMA;
+
+punto_separado_identificadores ::= punto_separado_identificadores PUNTO IDENTIFICADOR
+    | PUNTO IDENTIFICADOR;
+
+lista_imports ::= lista_imports import_declaration
+    | import_declaration;
+
+import_declaration ::= IMPORT IDENTIFICADOR punto_separado_identificadores PUNTO_Y_COMA
+    | IMPORT IDENTIFICADOR PUNTO_Y_COMA;
+
+lista_declaraciones_nivel_superior ::= lista_declaraciones_nivel_superior declaracion_nivel_superior
+    | declaracion_nivel_superior;
+
+declaracion_nivel_superior ::= declaracion_clase
+    | declaracion_objeto
+    | declaracion_interface
+    | declaracion_funcion
+    | declaracion_propiedad;
+
+// Modificadores
+modificadores ::= lista_modificadores
+    |  ;
+
+lista_modificadores ::= lista_modificadores modificador
+    | modificador;
+
+modificador ::= PUBLIC | PRIVATE | PROTECTED | INTERNAL
+    | OPEN | FINAL | ABSTRACT | SEALED
+    | DATA | CONST | LATEINIT;
+
+// Declaración de clase
+declaracion_clase ::= modificadores CLASS IDENTIFICADOR cuerpo_clase
+    {:System.out.println("Clase declarada correctamente!");:}
+    | modificadores CLASS IDENTIFICADOR DOS_PUNTOS tipo cuerpo_clase
+    | modificadores CLASS IDENTIFICADOR PARENTESIS_APERTURA lista_parametros PARENTESIS_CIERRE cuerpo_clase
+    | modificadores CLASS IDENTIFICADOR PARENTESIS_APERTURA lista_parametros PARENTESIS_CIERRE DOS_PUNTOS tipo cuerpo_clase;
+
+cuerpo_clase ::= LLAVE_APERTURA lista_miembros_clase LLAVE_CIERRE
+    | COMENTARIO
+    | LLAVE_APERTURA LLAVE_CIERRE;
+
+lista_miembros_clase ::= lista_miembros_clase miembro_clase
+    | miembro_clase;
+
+miembro_clase ::= declaracion_propiedad
+    | declaracion_funcion
+    | declaracion_clase
+    | declaracion_objeto;
+
+// Declaración de objeto
+declaracion_objeto ::= modificadores OBJECT IDENTIFICADOR cuerpo_clase
+    | modificadores OBJECT IDENTIFICADOR DOS_PUNTOS tipo cuerpo_clase;
+
+// Declaración de interface
+declaracion_interface ::= modificadores INTERFACE IDENTIFICADOR cuerpo_clase
+    | modificadores INTERFACE IDENTIFICADOR DOS_PUNTOS tipo cuerpo_clase;
+
+// Declaración de función
+declaracion_funcion ::= modificadores FUN IDENTIFICADOR PARENTESIS_APERTURA lista_parametros PARENTESIS_CIERRE tipo_opcional cuerpo_funcion
+    {:System.out.println("Función declarada correctamente!");:}
+    | modificadores FUN IDENTIFICADOR PARENTESIS_APERTURA PARENTESIS_CIERRE tipo_opcional cuerpo_funcion;
+
+lista_parametros ::= lista_parametros COMA parametro
+    | parametro;
+
+parametro ::= IDENTIFICADOR DOS_PUNTOS tipo
+    | VAL IDENTIFICADOR DOS_PUNTOS tipo
+    | VAR IDENTIFICADOR DOS_PUNTOS tipo
+    | IDENTIFICADOR DOS_PUNTOS tipo ASIGNACION expresion;
+
+tipo_opcional ::= DOS_PUNTOS tipo
+    |  ;
+
+cuerpo_funcion ::= bloque_sentencias
+    | COMENTARIO
+    | ASIGNACION expresion;
+
+// Declaración de propiedad
+declaracion_propiedad ::= modificadores VAL IDENTIFICADOR tipo_opcional inicializador_opcional
+    {:System.out.println("Propiedad val declarada!");:}
+    | modificadores VAR IDENTIFICADOR tipo_opcional inicializador_opcional
+    {:System.out.println("Propiedad var declarada!");:};
+
+inicializador_opcional ::= ASIGNACION expresion
+    |  ;
+
+// Tipos
+tipo ::= tipo_primitivo tipo_nullable;
+
+tipo_primitivo ::= TIPO_DATOS
+    | IDENTIFICADOR;
+
+tipo_nullable ::= NULLABLE
+    |  ;
+
+// Sentencias
+bloque_sentencias ::= LLAVE_APERTURA lista_sentencias LLAVE_CIERRE
+    | LLAVE_APERTURA LLAVE_CIERRE;
+
+lista_sentencias ::= lista_sentencias sentencia
+    | sentencia;
+
+sentencia ::= sentencia_simple punto_y_coma_opcional
+    | sentencia_compuesta;
+
+punto_y_coma_opcional ::= PUNTO_Y_COMA
+    |  ;
+
+sentencia_simple ::= sentencia_asignacion
+    | COMENTARIO
+    | sentencia_declaracion_variable
+    | sentencia_return
+    | sentencia_break
+    | sentencia_continue
+    | expresion;
+
+sentencia_compuesta ::= sentencia_if
+    | sentencia_when
+    | sentencia_for
+    | sentencia_while
+    | sentencia_try
+    | bloque_sentencias;
+
+sentencia_asignacion ::= IDENTIFICADOR punto_separado_identificadores ASIGNACION expresion
+    | IDENTIFICADOR ASIGNACION expresion;
+
+sentencia_declaracion_variable ::= VAL IDENTIFICADOR tipo_opcional inicializador_opcional
+    | VAR IDENTIFICADOR tipo_opcional inicializador_opcional;
+
+sentencia_return ::= RETURN expresion
+    | RETURN
+    ;
+sentencia_break ::= BREAK;
+
+sentencia_continue ::= CONTINUE;
+
+// Sentencias de control de flujo
+sentencia_if ::= IF PARENTESIS_APERTURA expresion PARENTESIS_CIERRE sentencia
+    | IF PARENTESIS_APERTURA expresion PARENTESIS_CIERRE sentencia ELSE sentencia;
+
+sentencia_when ::= WHEN PARENTESIS_APERTURA expresion PARENTESIS_CIERRE LLAVE_APERTURA lista_when_entries LLAVE_CIERRE
+    | WHEN LLAVE_APERTURA lista_when_entries LLAVE_CIERRE;
+
+lista_when_entries ::= lista_when_entries when_entry
+    | when_entry;
+
+when_entry ::= expresion ARROW sentencia
+    | ELSE ARROW sentencia;
+
+sentencia_for ::= FOR PARENTESIS_APERTURA IDENTIFICADOR IN_RANGE expresion PARENTESIS_CIERRE sentencia;
+
+sentencia_while ::= WHILE PARENTESIS_APERTURA expresion PARENTESIS_CIERRE sentencia;
+
+sentencia_try ::= TRY bloque_sentencias lista_catch_clauses finally_clause_opcional
+    | TRY bloque_sentencias finally_clause_opcional;
+
+lista_catch_clauses ::= lista_catch_clauses catch_clause
+    | catch_clause;
+
+catch_clause ::= CATCH PARENTESIS_APERTURA IDENTIFICADOR DOS_PUNTOS tipo PARENTESIS_CIERRE bloque_sentencias;
+
+finally_clause_opcional ::= FINALLY bloque_sentencias
+    |  ;
+
+// Expresiones
+expresion ::= expresion_elvis;
+
+expresion_elvis ::= expresion_logica_or ELVIS expresion_elvis
+    | expresion_logica_or;
+
+expresion_logica_or ::= expresion_logica_or OR expresion_logica_and
+    | expresion_logica_and;
+
+expresion_logica_and ::= expresion_logica_and AND expresion_igualdad
+    | expresion_igualdad;
+
+expresion_igualdad ::= expresion_igualdad IGUAL expresion_relacional
+    | expresion_igualdad DIFERENTE expresion_relacional
+    | expresion_relacional;
+
+expresion_relacional ::= expresion_relacional MENOR expresion_rango
+    | expresion_relacional MAYOR expresion_rango
+    | expresion_relacional MENOR_IGUAL expresion_rango
+    | expresion_relacional MAYOR_IGUAL expresion_rango
+    | expresion_rango;
+
+expresion_rango ::= expresion_aditiva RANGE expresion_aditiva
+    | expresion_aditiva RANGE_INCLUSIVE expresion_aditiva
+    | expresion_aditiva RANGE_EXCLUSIVE expresion_aditiva
+    | expresion_aditiva;
+
+expresion_aditiva ::= expresion_aditiva MAS expresion_multiplicativa
+    | expresion_aditiva MENOS expresion_multiplicativa
+    | expresion_multiplicativa;
+
+expresion_multiplicativa ::= expresion_multiplicativa MULTIPLICACION expresion_unaria
+    | expresion_multiplicativa DIVISION expresion_unaria
+    | expresion_multiplicativa MODULO expresion_unaria
+    | expresion_unaria;
+
+expresion_unaria ::= NOT expresion_unaria
+    | MENOS expresion_unaria
+    | MAS expresion_unaria
+    | expresion_postfijo;
+
+expresion_postfijo ::= expresion_postfijo INCREMENTO
+    | expresion_postfijo DECREMENTO
+    | expresion_postfijo PARENTESIS_APERTURA lista_argumentos PARENTESIS_CIERRE
+    | expresion_postfijo PARENTESIS_APERTURA PARENTESIS_CIERRE
+    | expresion_postfijo acceso_miembro
+    | expresion_primaria
+    ;
+
+expresion_primaria ::= literal
+    | IDENTIFICADOR
+    | PARENTESIS_APERTURA expresion PARENTESIS_CIERRE;
+
+// Literales
+literal ::= NUMERICO
+    | NUMERO_DECIMAL
+    | CADENA
+    | TRUE
+    | FALSE
+    | NULL;
+
+lista_argumentos ::= lista_argumentos COMA argumento
+    | argumento;
+
+argumento ::= expresion
+    | IDENTIFICADOR ASIGNACION expresion;
+
+// Acceso a miembros
+acceso_miembro ::= PUNTO IDENTIFICADOR
+    | SAFE_CALL IDENTIFICADOR;
