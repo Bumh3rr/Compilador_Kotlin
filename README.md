@@ -20,7 +20,7 @@ Herramientas adicionales:
 - RSyntaxTextArea → Editor de texto con resaltado de sintaxis
 
 ## Ejecución
-* Tener instalador JFlex previamente
+* Tener instalador JFlex previamente (`IMPORTANTE`)
 * Abrir en IntelliJ IDEA
 * Importar el proyecto como Proyecto Maven.
 * Asegurarse de que el JDK 17 (o superior) esté configurado.
