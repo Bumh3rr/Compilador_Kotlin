@@ -4,6 +4,7 @@ import bumh3r.utils.Lexer;
 import bumh3r.utils.Lexer_2;
 import bumh3r.utils.Parser;
 import bumh3r.utils.Token;
+import com.formdev.flatlaf.util.SystemInfo;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +61,9 @@ public class FormEditorController {
 
     public void importCode() {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File("/Users/bumh3r/Documents/GitHub/Programming/Java/Automatas_II/Proyect_Final_Automatas_II"));
+        String url = "";
+        if (SystemInfo.isMacOS) url = System.getProperty("user.home") + "/Documents";
+        fileChooser.setCurrentDirectory(new File(url));
         int returnValue = fileChooser.showOpenDialog(view);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             try {
