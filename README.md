@@ -11,7 +11,7 @@ De esta manera, el proyecto permite detectar errores léxicos y sintácticos en 
 - IDE: IntelliJ IDEA
 - Lenguaje: Java
 - Herramientas adicionales:
-- -JFlex → Generación del analizador léxico
+-* JFlex → Generación del analizador léxico
 --CUP → Generación del analizador sintáctico
 --MigLayout → Sistema de layout flexible para la interfaz gráfica
 --FlatLaf → Librería para un diseño moderno de la interfaz
