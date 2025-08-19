@@ -1,4 +1,5 @@
 # Simulador de Compilador para Kotlin - Proyect
+![](images/image-1.png)
 Este proyecto corresponde al proyecto final de la materia Tópicos Avanzados de Programación II, desarrollado en Java con el objetivo de construir un simulador de compilador para el lenguaje Kotlin.
 
 El compilador implementa las fases de:
@@ -27,6 +28,3 @@ Herramientas adicionales:
 * Ejecutar la clase Generador.java para compilar los archivos JFlex y CUP.
 * Ejecutar el simulador
 * Iniciar la clase principal del proyecto (Demo.java o la clase definida como launcher).
-
-## Imagenes
-![](images/image-1.png)
